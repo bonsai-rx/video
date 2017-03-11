@@ -14,8 +14,5 @@
     <releaseNotes>Public release of video source infrastructure for Bonsai.</releaseNotes>
     <copyright>Gonçalo Lopes © 2017</copyright>
     <tags>Bonsai Rx Reactive Extensions Video DirectShow</tags>
-    <dependencies>
-      <dependency id="Bonsai.Core" version="2.2.0" />
-    </dependencies>
   </metadata>
 </package>
