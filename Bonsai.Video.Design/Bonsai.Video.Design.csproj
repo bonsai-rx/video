@@ -4,7 +4,7 @@
     <Title>Bonsai - Video Design Library</Title>
     <Description>Bonsai Design Library containing visualizer and editor classes for video source types.</Description>
     <PackageTags>Bonsai Rx Video Editors</PackageTags>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Version>2.4.0</Version>
   </PropertyGroup>
