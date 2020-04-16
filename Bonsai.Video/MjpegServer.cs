@@ -29,30 +29,35 @@ namespace Bonsai.Video
                     }
                     listener.Start();
                     return Observable
-                        .FromAsync(listener.GetContextAsync).Repeat().Retry()
-                        .SelectMany(context => Observable.Using(
-                            () => context.Response,
-                            response =>
+                        .FromAsync(listener.GetContextAsync).Repeat()
+                        .SelectMany(async context =>
+                        {
+                            try
                             {
-                                response.ContentType = "multipart/x-mixed-replace; boundary=--boundary";
-                                var stream = response.OutputStream;
-                                var builder = new StringBuilder();
-                                return frames.Do(data =>
+                                using (var response = context.Response)
                                 {
-                                    builder.AppendLine();
-                                    builder.AppendLine("--boundary");
-                                    builder.AppendLine("Content-Type: image/jpeg");
-                                    builder.AppendLine("Content-Length: " + data.Length.ToString());
-                                    builder.AppendLine();
-                                    var header = Encoding.ASCII.GetBytes(builder.ToString());
-                                    stream.Write(header, 0, header.Length);
-                                    stream.Write(data, 0, data.Length);
-                                    builder.Clear();
-                                });
-                            }))
-                        .Retry()
-                        .IgnoreElements()
-                        .Select(x => default(IplImage));
+                                    response.ContentType = "multipart/x-mixed-replace; boundary=--boundary";
+                                    var stream = response.OutputStream;
+                                    var builder = new StringBuilder();
+                                    return await frames.SelectMany(async data =>
+                                    {
+                                        builder.AppendLine();
+                                        builder.AppendLine("--boundary");
+                                        builder.AppendLine("Content-Type: image/jpeg");
+                                        builder.AppendLine("Content-Length: " + data.Length.ToString());
+                                        builder.AppendLine();
+                                        var header = Encoding.ASCII.GetBytes(builder.ToString());
+                                        await stream.WriteAsync(header, 0, header.Length);
+                                        await stream.WriteAsync(data, 0, data.Length);
+                                        builder.Clear();
+                                        return default(IplImage);
+                                    });
+                                }
+                            }
+                            catch (HttpListenerException) { }
+                            return default;
+                        })
+                        .IgnoreElements();
                 })));
         }
     }

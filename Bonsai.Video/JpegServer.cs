@@ -53,12 +53,21 @@ namespace Bonsai.Video
                     }
                     listener.Start();
                     return Observable
-                        .FromAsync(listener.GetContextAsync).Repeat().Retry()
-                        .SelectMany(context => frames.FirstAsync().Do(data =>
+                        .FromAsync(listener.GetContextAsync).Repeat()
+                        .SelectMany(async context =>
                         {
-                            context.Response.OutputStream.Write(data, 0, data.Length);
-                            context.Response.Close();
-                        })).Retry().IgnoreElements().Select(x => default(IplImage));
+                            try
+                            {
+                                using (var response = context.Response)
+                                {
+                                    var data = await frames.FirstAsync();
+                                    await response.OutputStream.WriteAsync(data, 0, data.Length);
+                                }
+                            }
+                            catch (HttpListenerException) { }
+                            return default(IplImage);
+                        })
+                        .IgnoreElements();
                 })));
         }
     }
