@@ -1,20 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <Authors>Gonçalo Lopes</Authors>
     <Title>Bonsai - Video Design Library</Title>
-    <Copyright>Copyright © Gonçalo Lopes 2011-2020</Copyright>
-    <ProjectUrl>https://github.com/bonsai-rx/video</ProjectUrl>
-    <PackageLicenseUrl>https://bonsai-rx.org/license</PackageLicenseUrl>
-    <PackageIconUrl>https://bonsai-rx.org/assets/images/bonsai.png</PackageIconUrl>
     <Description>Bonsai Design Library containing visualizer and editor classes for video source types.</Description>
-    <IncludeSymbols Condition="'$(Configuration)'=='Release'">true</IncludeSymbols>
-    <PackageOutputPath>..\bin\$(Configuration)</PackageOutputPath>
     <PackageTags>Bonsai Rx Video Editors</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <TargetFramework>net472</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <Features>strict</Features>
     <Version>2.4.0</Version>
   </PropertyGroup>
 
