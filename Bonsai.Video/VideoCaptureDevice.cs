@@ -8,6 +8,7 @@ using System.Globalization;
 
 namespace Bonsai.Video
 {
+    [DefaultProperty(nameof(CaptureProperties))]
     [Description("Produces a sequence of images acquired from a DirectShow based video capture device.")]
     [Editor("Bonsai.Video.Design.VideoCaptureDeviceEditor, Bonsai.Video.Design", typeof(ComponentEditor))]
     public class VideoCaptureDevice : VideoCapture
@@ -19,6 +20,9 @@ namespace Bonsai.Video
         [TypeConverter(typeof(FormatConverter))]
         [Description("The output format of the video capture device.")]
         public VideoFormat Format { get; set; }
+
+        [Description("Specifies the set of capture properties assigned to the camera.")]
+        public CameraPropertyCollection CaptureProperties { get; } = new CameraPropertyCollection();
 
         protected override IVideoSource CreateVideoSource()
         {
@@ -37,6 +41,16 @@ namespace Bonsai.Video
                 videoSource.VideoResolution = videoResolution;
             }
             return videoSource;
+        }
+
+        protected override void StartVideoSource(IVideoSource videoSource)
+        {
+            base.StartVideoSource(videoSource);
+            var captureDevice = (AForge.Video.DirectShow.VideoCaptureDevice)videoSource;
+            foreach (var setting in CaptureProperties)
+            {
+                captureDevice.SetCameraProperty(setting.Property, setting.Value, setting.ControlFlags);
+            }
         }
 
         class IndexConverter : Int32Converter

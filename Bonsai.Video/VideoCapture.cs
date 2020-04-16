@@ -41,7 +41,7 @@ namespace Bonsai.Video
 
                             videoSource.VideoSourceError += (sender, e) =>
                             {
-                                Interlocked.Exchange(ref exception, new VideoException(e.Description));
+                                Interlocked.CompareExchange(ref exception, new VideoException(e.Description), null);
                                 waitEvent.Set();
                             };
 
@@ -51,7 +51,13 @@ namespace Bonsai.Video
                                 waitEvent.Set();
                             };
 
-                            videoSource.Start();
+                            try { StartVideoSource(videoSource); }
+                            catch (Exception error)
+                            {
+                                exception = error;
+                                waitEvent.Set();
+                            }
+
                             VideoSource = videoSource;
                             using (var cleanUp = Disposable.Create(() => VideoSource = null))
                             using (var stopNotification = Disposable.Create(videoSource.WaitForStop))
@@ -92,6 +98,11 @@ namespace Bonsai.Video
         public IVideoSource VideoSource { get; private set; }
 
         protected abstract IVideoSource CreateVideoSource();
+
+        protected virtual void StartVideoSource(IVideoSource videoSource)
+        {
+            videoSource.Start();
+        }
 
         protected virtual IplImage ProcessFrame(Bitmap bitmap)
         {
