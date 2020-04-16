@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AForge.Video;
-using System.Drawing;
-using OpenCV.Net;
-using System.Drawing.Imaging;
-using System.Reactive.Linq;
-using System.Reactive.Disposables;
+﻿using AForge.Video;
 using System.ComponentModel;
 
 namespace Bonsai.Video
