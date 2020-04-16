@@ -1,5 +1,6 @@
 ﻿using OpenCV.Net;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
@@ -8,11 +9,12 @@ using System.Text;
 
 namespace Bonsai.Video
 {
+    [DefaultProperty(nameof(UriPrefixes))]
     [Description("Publishes the sequence of images as an MJPEG image stream.")]
     public class MjpegServer : Sink<IplImage>
     {
-        [Description("The URL which will provide the MJPEG image stream.")]
-        public string SourceUrl { get; set; }
+        [Description("The URI prefixes handled by the MJPEG image server.")]
+        public Collection<string> UriPrefixes { get; } = new Collection<string>();
 
         public override IObservable<IplImage> Process(IObservable<IplImage> source)
         {
@@ -21,7 +23,10 @@ namespace Bonsai.Video
                 listener =>
                 {
                     var frames = JpegServer.EncodeImage(ps).PublishReconnectable().RefCount();
-                    listener.Prefixes.Add(SourceUrl);
+                    foreach (var prefix in UriPrefixes)
+                    {
+                        listener.Prefixes.Add(prefix);
+                    }
                     listener.Start();
                     return Observable
                         .FromAsync(listener.GetContextAsync).Repeat().Retry()
