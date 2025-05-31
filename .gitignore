@@ -1,4 +1,5 @@
-bin
-obj
-.vs
-.nuget
+.bonsai/Bonsai.exe*
+.bonsai/Packages/
+.bonsai/Settings/
+.vs/
+/artifacts/
